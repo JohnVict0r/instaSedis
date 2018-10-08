@@ -29,37 +29,34 @@ class FotoInfo extends Component{
 
             <div className="foto-info">
                 <div className="foto-info-likes">
-                    <a href="#">
-                        sedis
-                    </a>
 
-                    ,
-
-                    <a href="#">
-                        Rayron
-                    </a>
-                    ...
-                    curtiram
+                    {
+                        this.props.foto.likers.map(liker => {
+                            return (
+                                <a href="#" key={liker.id}>{liker.login}, </a>)
+                        })
+                    }
+                    ... curtiram
                 </div>
 
                 <p className="foto-info-legenda">
                     <a className="foto-info-autor">John_Alves </a>
-                    Foto básica da tarde... ♡
+                    {this.props.foto.comentario}
                 </p>
 
                 <ul className="foto-info-comentarios">
-                    <li className="comentario">
-                        <a className="foto-info-autor"> Rayron </a>
-                        ótima foto!
-                    </li>
-                    <li className="comentario">
-                        <a className="foto-info-autor"> Fotos_potiguar </a>
-                        Show!
-                    </li>
-                    <li className="comentario">
-                        <a className="foto-info-autor"> Labradores_RN </a>
-                        ♡
-                    </li>
+
+                    {
+                        this.props.foto.comentarios.map(comentario => {
+                            return(
+                                <li className="comentario" key={comentario.id}>
+                                    <a className="foto-info-autor"> {comentario.login}</a>
+                                    {comentario.texto}
+                                </li>
+                            )
+                        })
+                    }
+
                 </ul>
             </div>
         );
@@ -94,7 +91,7 @@ export default class Publicacao extends Component{
             <div className="foto">
                 <PublicacaoHeader foto={this.props.foto}/>
                 <img alt="foto" className="foto-src" src={this.props.foto.urlFoto}/>
-                <FotoInfo/>
+                <FotoInfo foto={this.props.foto} key={this.props.foto.id}/>
                 <FotoAtualizacoes/>
             </div>
 
