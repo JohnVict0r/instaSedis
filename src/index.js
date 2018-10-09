@@ -4,11 +4,13 @@ import ReactDOM from 'react-dom';
 import './css/timeline.css';
 import './css/reset.css';
 import './css/login.css';
+import './css/alert.css';
 
 import App from './App';
 import Login from './componentes/Login';
-import Logout from './componentes/Logout';
-import {BrowserRouter, Switch, Route, Redirect} from 'react-router-dom';
+import createBrowserHistory from 'history/createBrowserHistory';
+import {BrowserRouter, Switch, Route, Redirect,matchPath} from 'react-router-dom';
+
 
 
 ReactDOM.render(
@@ -16,14 +18,21 @@ ReactDOM.render(
     <BrowserRouter>
         <Switch>
             <Route exact path="/" component={Login} />
-            <Route path="/logout" component={Logout} />
-            <Route exact path="/timeline" render={() => (
+            <Route path="/logout" render={() => (
+                <Redirect to="/?logout=true"/>
+            )} />
+            <Route path="/timeline/:login?" render={() => (
                 isLoggedIn() ? (
-                    <Redirect to="/?msg=Você precisa estar logado para acessar"/>
+                    <Redirect to="/?notLogged=true"/>
                 ) : (
-                    <App />
+                    <App  />
                 )
             )}/>
+            <Route path="/**" render={() => (
+                <Redirect to="/logout"/>
+            )}
+            />
+
         </Switch>
     </BrowserRouter>
     , document.getElementById('root')
@@ -34,5 +43,11 @@ ReactDOM.render(
 // Learn more about service workers: http://bit.ly/CRA-PWA
 
 function isLoggedIn() {
-    return localStorage.getItem('auth-token') === null;
+    const history = createBrowserHistory();
+    const match = matchPath(history.location.pathname,  {path: '/timeline/:login'});
+
+    const privateRoute = match === null;
+
+    return (privateRoute && localStorage.getItem('auth-token')) === null;
+
 }

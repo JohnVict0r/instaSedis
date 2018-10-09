@@ -1,5 +1,7 @@
 import React , {Component} from "react";
 
+
+
 export default class Login extends Component{
 
 
@@ -7,14 +9,26 @@ export default class Login extends Component{
     constructor(props) {
         super(props);
 
-        var msg = '';
+        let msg = '';
+        let notLogged='';
+
         const queryParams = new URLSearchParams(props.location.search);
-        const queryMsg = queryParams.get('msg');
+        const queryMsg = queryParams.get('notLogged');
+        const logout= queryParams.get('logout');
+
         if(queryMsg) {
-            msg = queryMsg;
+            notLogged = queryMsg;
+        }
+        if(notLogged === 'true' ){
+            msg = 'É necessário Realizar o login!';
+        }
+        if(logout){
+            localStorage.removeItem('auth-token');
+
         }
 
         this.state = {msg: msg};
+
     }
 
 
@@ -35,7 +49,7 @@ export default class Login extends Component{
                 if(response.ok){
                     return response.text();
                 }else{
-                    throw new Error('não foi possível fazer o login');
+                    throw new Error('Usuário e/ou senha inválidos!');
 
                 }
             })
@@ -53,11 +67,17 @@ export default class Login extends Component{
         return(
             <div className="login-box">
                 <h1 className="header-logo">Instasedis</h1>
-                <span>{this.state.msg}</span>
+                {this.state.msg ? (
+                    <div className="alert alert-danger" role="alert">
+                        <span>{this.state.msg}</span>
+                    </div>) : ''
+                }
+
+
                 <form onSubmit={this.envia.bind(this)}>
-                    <input type="text" ref={(input) => this.login = input}/>
-                    <input type="password" ref={(input) => this.senha = input}/>
-                    <input type="submit" value="login"/>
+                    <input placeholder="Login" type="text" ref={(input) => this.login = input}/>
+                    <input placeholder="Senha" type="password" ref={(input) => this.senha = input}/>
+                    <input type="submit" value="Entrar"/>
                 </form>
             </div>
         );

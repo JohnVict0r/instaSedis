@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 
 import Header from './componentes/Header'
-import Timeline from "./componentes/timeline";
-
+import Timeline from "./componentes/Timeline";
 
 class App extends Component {
-  render() {
+
+    render() {
     return (
 
         <div id="root">
             <div className="main">
               <Header/>
-              <Timeline/>
+              <Timeline login = {this.props.params.login} />
             </div>
         </div>
 

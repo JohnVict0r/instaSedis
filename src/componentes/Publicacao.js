@@ -1,7 +1,7 @@
 import React , {Component} from "react";
+import {Link} from 'react-router-dom';
 
-
-class PublicacaoHeader extends Component{
+class FotoHeader extends Component{
 
     render(){
         return(
@@ -9,9 +9,9 @@ class PublicacaoHeader extends Component{
             <figure className="foto-usuario">
                 <img src={this.props.foto.urlPerfil} alt="foto do usuario"/>
                 <figcaption className="foto-usuario">
-                    <a href="#">
+                    <Link to={`/timeline?${this.props.foto.loginUsuario}`} >
                         {this.props.foto.loginUsuario}
-                    </a>
+                    </Link>
                 </figcaption>
             </figure>
 
@@ -33,8 +33,8 @@ class FotoInfo extends Component{
                     {
                         this.props.foto.likers.map(liker => {
                             return (
-                                <a href="#" key={liker.id}>{liker.login}, </a>)
-                        })
+                                <Link key={liker.login} href={`/timeline/${liker.login}`} >{liker.login},</Link>)
+                    })
                     }
                     ... curtiram
                 </div>
@@ -49,8 +49,10 @@ class FotoInfo extends Component{
                     {
                         this.props.foto.comentarios.map(comentario => {
                             return(
-                                <li className="comentario" key={comentario.id}>
-                                    <a className="foto-info-autor"> {comentario.login}</a>
+                                <li className="comentarios" key={comentario.id}>
+                                    <Link to={`/timeline/${comentario.login} `} className="foto-info-autor">
+                                    {comentario.login}
+                                    </Link>
                                     {comentario.texto}
                                 </li>
                             )
@@ -89,7 +91,7 @@ export default class Publicacao extends Component{
         return(
 
             <div className="foto">
-                <PublicacaoHeader foto={this.props.foto}/>
+                <FotoHeader foto={this.props.foto}/>
                 <img alt="foto" className="foto-src" src={this.props.foto.urlFoto}/>
                 <FotoInfo foto={this.props.foto} key={this.props.foto.id}/>
                 <FotoAtualizacoes/>

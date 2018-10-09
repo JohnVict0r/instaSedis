@@ -13,12 +13,19 @@ export default class Timeline extends Component  {
 
 
     componentDidMount(){
-        fetch('https://instalura-api.herokuapp.com/api/public/fotos/rafael' )
+
+        let urlPerfil;
+
+        if(this.login === undefined) {
+            urlPerfil = `http://localhost:8080/api/fotos?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`;
+        } else {
+            urlPerfil = `http://localhost:8080/api/public/fotos/${this.props.login}`;
+        }
+
+        fetch(urlPerfil)
             .then(response => response.json())
             .then(fotos => {
-                this.setState({
-                    fotos:fotos
-                });
+                this.setState({fotos:fotos});
             });
     }
 
