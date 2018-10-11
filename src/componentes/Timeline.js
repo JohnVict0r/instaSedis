@@ -4,29 +4,39 @@ import Publicacao from "./Publicacao";
 export default class Timeline extends Component  {
 
 
-    constructor(){
-        super();
-        this.state ={
-            fotos:[]
-        };
+    constructor(props){
+        super(props);
+        this.state ={ fotos:[] };
+        this.login = this.props.login;
     }
 
-
-    componentDidMount(){
-
+    carregarFotos(){
         let urlPerfil;
 
-        if(this.props.login === undefined) {
+        if(this.login === undefined) {
             urlPerfil = `http://instalura-api.herokuapp.com/api/fotos?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`;
         } else {
-            urlPerfil = `http://instalura-api.herokuapp.com/api/public/fotos/${this.props.login}`;
+            urlPerfil = `http://instalura-api.herokuapp.com/api/public/fotos/${this.login}`;
         }
 
         fetch(urlPerfil)
             .then(response => response.json())
             .then(fotos => {
                 this.setState({fotos:fotos});
-            });
+            })
+    }
+
+    componentDidMount(){
+
+        this.carregarFotos();
+
+    }
+
+    componentWillReceiveProps(nextProps){
+        if(nextProps.login !== undefined){
+            this.login = nextProps.login;
+            this.carregarFotos();
+        }
     }
 
     render(){

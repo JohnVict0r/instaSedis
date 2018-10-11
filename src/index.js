@@ -21,11 +21,11 @@ ReactDOM.render(
             <Route path="/logout" render={() => (
                 <Redirect to="/?logout=true"/>
             )} />
-            <Route path="/timeline/:login?" render={() => (
+            <Route path="/timeline/:login?" render={(props) => (
                 isLoggedIn() ? (
                     <Redirect to="/?notLogged=true"/>
                 ) : (
-                    <App />
+                    <App {...props}/>
                 )
             )}/>
             <Route path="/**" render={() => (

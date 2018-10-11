@@ -9,7 +9,7 @@ class FotoHeader extends Component{
             <figure className="foto-usuario">
                 <img src={this.props.foto.urlPerfil} alt="foto do usuario"/>
                 <figcaption className="foto-usuario">
-                    <Link to={`/timeline?${this.props.foto.loginUsuario}`} >
+                    <Link to={`/timeline/${this.props.foto.loginUsuario}`} >
                         {this.props.foto.loginUsuario}
                     </Link>
                 </figcaption>
@@ -67,11 +67,38 @@ class FotoInfo extends Component{
 
 class FotoAtualizacoes extends Component{
 
+
+    constructor(props){
+        super(props);
+
+        this.state = {
+            likeada: this.props.foto.likeada
+        };
+    }
+
+    curtir(event){
+        event.preventDefault();
+
+        let curtirUrl = `http://instalura-api.herokuapp.com/api/fotos/${this.props.foto.id}/like?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`;
+        fetch(curtirUrl, {method: 'POST'})
+        .then(response => {
+            if(response.ok){
+                return response.json();
+            }else{
+                throw new Error("não foi possivel curtir a foto");
+            }
+
+        })
+        .then (liker => {
+            this.setState({likeada : !this.likeada})
+        })
+    }
+
     render(){
 
         return(
             <section className="fotoAtualizacoes">
-                <a href="#" className="fotoAtualizacoes-like">Linkar</a>
+                <a onClick={this.curtir.bind(this)} className={this.state.likeada ? 'fotoAtualizacoes-like-ativo' : 'fotoAtualizacoes-like'}>Linkar</a>
                 <form className="fotoAtualizacoes-form">
                     <input type="text" placeholder="Adicione um comentário..." className="fotoAtualizacoes-form-campo"/>
                     <input type="submit" value="Comentar!" className="fotoAtualizacoes-form-submit"/>
@@ -94,7 +121,7 @@ export default class Publicacao extends Component{
                 <FotoHeader foto={this.props.foto}/>
                 <img alt="foto" className="foto-src" src={this.props.foto.urlFoto}/>
                 <FotoInfo foto={this.props.foto} key={this.props.foto.id}/>
-                <FotoAtualizacoes/>
+                <FotoAtualizacoes foto={this.props.foto}/>
             </div>
 
         );
