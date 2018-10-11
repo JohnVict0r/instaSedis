@@ -16,10 +16,10 @@ export default class Timeline extends Component  {
 
         let urlPerfil;
 
-        if(this.login === undefined) {
-            urlPerfil = `http://localhost:8080/api/fotos?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`;
+        if(this.props.login === undefined) {
+            urlPerfil = `http://instalura-api.herokuapp.com/api/fotos?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`;
         } else {
-            urlPerfil = `http://localhost:8080/api/public/fotos/${this.props.login}`;
+            urlPerfil = `http://instalura-api.herokuapp.com/api/public/fotos/${this.props.login}`;
         }
 
         fetch(urlPerfil)

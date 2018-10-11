@@ -25,7 +25,7 @@ ReactDOM.render(
                 isLoggedIn() ? (
                     <Redirect to="/?notLogged=true"/>
                 ) : (
-                    <App  />
+                    <App />
                 )
             )}/>
             <Route path="/**" render={() => (
