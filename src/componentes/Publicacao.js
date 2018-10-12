@@ -33,14 +33,14 @@ class FotoInfo extends Component{
                     {
                         this.props.foto.likers.map(liker => {
                             return (
-                                <Link key={liker.login} href={`/timeline/${liker.login}`} >{liker.login},</Link>)
+                                <Link key={liker.login} to={`/timeline/${liker.login}`} >{liker.login},</Link>)
                     })
                     }
                     ... curtiram
                 </div>
 
                 <p className="foto-info-legenda">
-                    <a className="foto-info-autor">John_Alves </a>
+                    <a className="foto-info-autor">{this.props.foto.loginUsuario} </a>
                     {this.props.foto.comentario}
                 </p>
 
@@ -80,6 +80,7 @@ class FotoAtualizacoes extends Component{
         event.preventDefault();
 
         let curtirUrl = `http://instalura-api.herokuapp.com/api/fotos/${this.props.foto.id}/like?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`;
+
         fetch(curtirUrl, {method: 'POST'})
         .then(response => {
             if(response.ok){

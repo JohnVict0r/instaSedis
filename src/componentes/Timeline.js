@@ -20,9 +20,16 @@ export default class Timeline extends Component  {
         }
 
         fetch(urlPerfil)
-            .then(response => response.json())
-            .then(fotos => {
-                this.setState({fotos:fotos});
+            .then(response => {
+                if(response.ok){
+                    return response.json();
+                }else{
+                    throw new Error("não foi possivel carregar as fotos");
+                }
+
+            })
+            .then(novasFotos => {
+                this.setState({fotos:novasFotos});
             })
     }
 
