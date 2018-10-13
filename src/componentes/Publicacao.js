@@ -1,6 +1,6 @@
 import React , {Component} from "react";
-import {Link, matchPath} from 'react-router-dom';
-import createBrowserHistory from "history/createBrowserHistory";
+import {Link} from 'react-router-dom';
+import Pubsub from 'pubsub-js';
 
 class FotoHeader extends Component{
 
@@ -24,6 +24,27 @@ class FotoHeader extends Component{
 
 class FotoInfo extends Component{
 
+
+    constructor(props){
+        super(props);
+        this.state = {likers : this.props.foto.likers};
+
+    }
+
+    componentWillMount(){
+        Pubsub.subscribe('atualiza-liker',(topico,infoLiker) => {
+            if(this.props.foto.id === infoLiker.fotoId){
+                const possivelLiker = this.state.likers.find(liker => liker.login === infoLiker.liker.login);
+                if(possivelLiker === undefined){
+                    const novosLikers = this.state.likers.concat(infoLiker.liker);
+                    this.setState({likers:novosLikers});
+                }else {
+                    const novosLikers = this.state.likers.filter(liker => liker.login !== infoLiker.liker.login);
+                    this.setState({likers:novosLikers});
+                }
+            }
+        })
+    }
     render(){
 
         return(
@@ -32,16 +53,16 @@ class FotoInfo extends Component{
                 <div className="foto-info-likes">
 
                     {
-                        this.props.foto.likers.map(liker => {
+                        this.state.likers.map(curtida => {
                             return (
-                                <Link key={liker.login} to={`/timeline/${liker.login}`} >{liker.login},</Link>)
+                                <Link key={curtida.login} to={`/timeline/${curtida.login}`} >{curtida.login},</Link>)
                     })
                     }
                     ... curtiram
                 </div>
 
                 <p className="foto-info-legenda">
-                    <a className="foto-info-autor">{this.props.foto.loginUsuario} </a>
+                    <Link to={`/timeline/${this.props.foto.loginUsuario} `} className="foto-info-autor">{this.props.foto.loginUsuario} </Link>
                     {this.props.foto.comentario}
                 </p>
 
@@ -92,7 +113,8 @@ class FotoAtualizacoes extends Component{
 
         })
         .then (liker => {
-            this.setState({likeada : !this.state.likeada})
+            this.setState({likeada : !this.state.likeada});
+            Pubsub.publish('atualiza-liker',{fotoId:this.props.foto.id,liker});
         })
     }
 
@@ -114,6 +136,13 @@ class FotoAtualizacoes extends Component{
 
 
 export default class Publicacao extends Component{
+
+
+    componentWillMount(){
+        Pubsub.subscribe('atualiza-liker',(topico, infoLiker) => {
+            console.log(infoLiker);
+        });
+    }
 
     render(){
 
