@@ -92,7 +92,7 @@ class FotoAtualizacoes extends Component{
 
         })
         .then (liker => {
-            this.setState({likeada : !this.likeada})
+            this.setState({likeada : !this.state.likeada})
         })
     }
 
@@ -132,10 +132,6 @@ export default class Publicacao extends Component{
 }
 
 function isLoggedIn() {
-    const history = createBrowserHistory();
-    const match = matchPath(history.location.pathname,  {path: '/timeline/:login'});
-
-    const privateRoute = match === null;
 
     return (localStorage.getItem('auth-token')) === null;
 
