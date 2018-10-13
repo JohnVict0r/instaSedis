@@ -6,7 +6,11 @@ export default class Timeline extends Component  {
 
     constructor(props){
         super(props);
-        this.state ={ fotos:[] };
+
+        this.state ={
+            fotos:[]
+        };
+
         this.login = this.props.login;
     }
 

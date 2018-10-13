@@ -27,7 +27,9 @@ export default class Login extends Component{
 
         }
 
-        this.state = {msg: msg};
+        this.state = {
+            msg: msg
+        };
 
     }
 
