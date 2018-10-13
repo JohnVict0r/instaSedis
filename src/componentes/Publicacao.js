@@ -1,5 +1,6 @@
 import React , {Component} from "react";
-import {Link} from 'react-router-dom';
+import {Link, matchPath} from 'react-router-dom';
+import createBrowserHistory from "history/createBrowserHistory";
 
 class FotoHeader extends Component{
 
@@ -122,7 +123,7 @@ export default class Publicacao extends Component{
                 <FotoHeader foto={this.props.foto}/>
                 <img alt="foto" className="foto-src" src={this.props.foto.urlFoto}/>
                 <FotoInfo foto={this.props.foto} key={this.props.foto.id}/>
-                <FotoAtualizacoes foto={this.props.foto}/>
+                {isLoggedIn() ? '' : (<FotoAtualizacoes foto={this.props.foto}/>)}
             </div>
 
         );
@@ -130,4 +131,13 @@ export default class Publicacao extends Component{
 
 }
 
+function isLoggedIn() {
+    const history = createBrowserHistory();
+    const match = matchPath(history.location.pathname,  {path: '/timeline/:login'});
+
+    const privateRoute = match === null;
+
+    return (localStorage.getItem('auth-token')) === null;
+
+}
 /* Cachorro: https://i.pinimg.com/originals/c2/f1/15/c2f1157bd0e45b018fffacccc4624401.jpg*/
