@@ -67,7 +67,7 @@ class FotoInfo extends Component{
                                 <Link key={curtida.login} to={`/timeline/${curtida.login}`} >{curtida.login},</Link>)
                     })
                     }
-                    ... curtiram
+                    <a> ... curtiram</a>
                 </div>
 
                 <p className="foto-info-legenda">
@@ -84,7 +84,7 @@ class FotoInfo extends Component{
                                     <Link to={`/timeline/${comentario.login} `} className="foto-info-autor">
                                     {comentario.login}
                                     </Link>
-                                    {comentario.texto}
+                                    <a> {comentario.texto}</a>
                                 </li>
                             )
                         })
@@ -149,6 +149,7 @@ class FotoAtualizacoes extends Component{
             })
             .then(novoComentario => {
                 Pubsub.publish('novo-comentarios', { fotoId:this.props.foto.id,novoComentario});
+                this.comentario.value='';
             })
     };
 
