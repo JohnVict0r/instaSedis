@@ -14,6 +14,9 @@ export default class Timeline extends Component  {
         Pubsub.subscribe('timeline',(topico,novasfotos) => {
             this.setState({fotos:novasfotos})
         });
+        Pubsub.subscribe('timeline-pesquisa',(topico,novasfotos) => {
+            this.setState({fotos:novasfotos.fotos})
+        });
 
         Pubsub.subscribe('atualiza-liker',(topico,infoLiker) => {
             const fotoEncontrada = this.state.fotos.find(foto => foto.id === infoLiker.fotoId);
@@ -64,13 +67,13 @@ export default class Timeline extends Component  {
                 }else{
                     throw new Error("não foi possivel carregar as fotos");
                 }
-
             })
             .then(novasFotos => {
                 this.setState({fotos:novasFotos});
             })
     }
     renderFotos(){
+        console.log(JSON.stringify(this.state))
         return this.state.fotos.map(foto =>
             (
                 <Publicacao foto={foto} key={foto.id} curtir={this.curtir} comentar={this.comentar}/>
