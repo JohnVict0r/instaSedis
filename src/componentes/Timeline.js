@@ -12,23 +12,20 @@ export default class Timeline extends Component  {
 
     componentWillMount(){
         Pubsub.subscribe('timeline',(topico,novasfotos) => {
-            console.log(novasfotos)
             this.setState({fotos:novasfotos})
         });
 
         Pubsub.subscribe('atualiza-liker',(topico,infoLiker) => {
             const fotoEncontrada = this.state.fotos.find(foto => foto.id === infoLiker.fotoId);
-            fotoEncontrada.likeada=!fotoEncontrada;
+            fotoEncontrada.likeada=!fotoEncontrada.likeada;
             const possivelLiker = fotoEncontrada.likers.find(liker => liker.login === infoLiker.liker.login);
 
             if(possivelLiker === undefined){
                 fotoEncontrada.likers.push(infoLiker.liker);
-
             }else {
                 const novosLikers = fotoEncontrada.likers.filter(liker => liker.login !== infoLiker.liker.login);
                 fotoEncontrada.likers = novosLikers;
             }
-
             this.setState({fotos:this.state.fotos});
         });
 
@@ -73,8 +70,6 @@ export default class Timeline extends Component  {
                 this.setState({fotos:novasFotos});
             })
     }
-
-
     renderFotos(){
         return this.state.fotos.map(foto =>
             (

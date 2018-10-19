@@ -86,14 +86,12 @@ class FotoAtualizacoes extends Component{
 export default class Publicacao extends Component{
     render(){
         return(
-
             <div className="foto">
                 <FotoHeader foto={this.props.foto}/>
                 <img alt="foto" className="foto-src" src={this.props.foto.urlFoto}/>
                 <FotoInfo foto={this.props.foto} key={this.props.foto.id}/>
                 {isLoggedIn() ? '' : (<FotoAtualizacoes {...this.props}/>)}
             </div>
-
         );
     }
 
