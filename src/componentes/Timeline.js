@@ -2,6 +2,8 @@ import React , {Component} from "react";
 import Publicacao from "./Publicacao";
 import Pubsub from 'pubsub-js';
 
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+
 export default class Timeline extends Component  {
 
 
@@ -19,6 +21,7 @@ export default class Timeline extends Component  {
             this.setState({fotos:novasfotos})
 
         })
+
     }
 
     carregarFotos(){
@@ -51,6 +54,13 @@ export default class Timeline extends Component  {
 
     }
 
+    renderFotos(){
+        return this.state.fotos.map(foto =>
+            (
+                <Publicacao foto={foto} key={foto.id}/>
+            )
+        );
+    }
 
     componentWillReceiveProps(nextProps){
         if(nextProps.login !== undefined){
@@ -65,9 +75,14 @@ export default class Timeline extends Component  {
         return(
             <div className="fotos container">
 
-                {
-                    this.state.fotos.map(foto => <Publicacao foto={foto} key={foto.id}/>)
-                }
+                <ReactCSSTransitionGroup
+                    transitionName="timeline"
+                    transitionEnterTimeout={500}
+                    transitionLeaveTimeout={300}>
+
+                    {this.renderFotos()}
+
+                </ReactCSSTransitionGroup>
 
             </div>
 
