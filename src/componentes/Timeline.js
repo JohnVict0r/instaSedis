@@ -4,13 +4,9 @@ import Pubsub from 'pubsub-js';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 export default class Timeline extends Component  {
-
-
     constructor(props){
         super(props);
-
         this.state ={fotos:[]};
-
         this.login = this.props.login;
     }
 
@@ -18,15 +14,34 @@ export default class Timeline extends Component  {
         Pubsub.subscribe('timeline',(topico,novasfotos) => {
             console.log(novasfotos)
             this.setState({fotos:novasfotos})
+        });
 
-        })
+        Pubsub.subscribe('atualiza-liker',(topico,infoLiker) => {
+            const fotoEncontrada = this.state.fotos.find(foto => foto.id === infoLiker.fotoId);
+            fotoEncontrada.likeada=!fotoEncontrada;
+            const possivelLiker = fotoEncontrada.likers.find(liker => liker.login === infoLiker.liker.login);
 
+            if(possivelLiker === undefined){
+                fotoEncontrada.likers.push(infoLiker.liker);
+
+            }else {
+                const novosLikers = fotoEncontrada.likers.filter(liker => liker.login !== infoLiker.liker.login);
+                fotoEncontrada.likers = novosLikers;
+            }
+
+            this.setState({fotos:this.state.fotos});
+        });
+
+        Pubsub.subscribe('novo-comentarios', (topico,infoComentario) =>
+        {
+            const fotoEncontrada = this.state.fotos.find(foto => foto.id === infoComentario.fotoId);
+            fotoEncontrada.comentarios.push(infoComentario.novoComentario);
+            this.setState({fotos:this.state.fotos});
+        });
     }
 
     componentDidMount(){
-
         this.carregarFotos();
-
     }
 
     componentWillReceiveProps(nextProps){
@@ -56,7 +71,6 @@ export default class Timeline extends Component  {
             })
             .then(novasFotos => {
                 this.setState({fotos:novasFotos});
-
             })
     }
 
@@ -69,7 +83,6 @@ export default class Timeline extends Component  {
         );
     }
     curtir(fotoId){
-
         let curtirUrl = `http://instalura-api.herokuapp.com/api/fotos/${fotoId}/like?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`;
 
         fetch(curtirUrl, {method: 'POST'})
@@ -79,7 +92,6 @@ export default class Timeline extends Component  {
                 }else{
                     throw new Error("não foi possivel curtir a foto");
                 }
-
             })
             .then (liker => {
                 Pubsub.publish('atualiza-liker',{fotoId,liker});
@@ -106,15 +118,12 @@ export default class Timeline extends Component  {
             })
             .then(novoComentario => {
                 Pubsub.publish('novo-comentarios', { fotoId,novoComentario});
-
             })
     }
 
     render(){
-
         return(
             <div className="fotos container">
-
                 <ReactCSSTransitionGroup
                     transitionName="timeline"
                     transitionEnterTimeout={500}
@@ -123,9 +132,7 @@ export default class Timeline extends Component  {
                     {this.renderFotos()}
 
                 </ReactCSSTransitionGroup>
-
             </div>
-
         );
     }
 
