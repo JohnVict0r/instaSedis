@@ -109,48 +109,19 @@ class FotoAtualizacoes extends Component{
 
     curtir(event){
         event.preventDefault();
+        this.setState({likeada : !this.state.likeada});
+        this.props.curtir(this.props.foto.id);
 
-        let curtirUrl = `http://instalura-api.herokuapp.com/api/fotos/${this.props.foto.id}/like?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`;
-
-        fetch(curtirUrl, {method: 'POST'})
-        .then(response => {
-            if(response.ok){
-                return response.json();
-            }else{
-                throw new Error("não foi possivel curtir a foto");
-            }
-
-        })
-        .then (liker => {
-            this.setState({likeada : !this.state.likeada});
-            Pubsub.publish('atualiza-liker',{fotoId:this.props.foto.id,liker});
-        })
     }
 
-    comenta(event){
+    comentar(event){
         event.preventDefault();
-        const requestInfo = {
-            method:'POST',
-            body:JSON.stringify({texto:this.comentario.value}),
-            headers: new Headers({
-                'Content-type':'application/json'
-            })
-        };
+        if(this.comentario.value !=='') {
+            this.props.comentar(this.props.foto.id, this.comentario.value)
+        }
+        this.comentario.value='';
 
-        let comment = `https://instalura-api.herokuapp.com/api/fotos/${this.props.foto.id}/comment?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`;
 
-        fetch(comment,requestInfo)
-            .then(response => {
-                if(response.ok){
-                    return response.json();
-                } else {
-                    throw new Error("não foi possível comentar");
-                }
-            })
-            .then(novoComentario => {
-                Pubsub.publish('novo-comentarios', { fotoId:this.props.foto.id,novoComentario});
-                this.comentario.value='';
-            })
     };
 
     render(){
@@ -158,7 +129,7 @@ class FotoAtualizacoes extends Component{
         return(
             <section className="fotoAtualizacoes">
                 <a onClick={this.curtir.bind(this)} className={this.state.likeada ? 'fotoAtualizacoes-like-ativo' : 'fotoAtualizacoes-like'}>Linkar</a>
-                <form className="fotoAtualizacoes-form" onSubmit={this.comenta.bind(this)}>
+                <form className="fotoAtualizacoes-form" onSubmit={this.comentar.bind(this)}>
                     <input type="text" ref={input => this.comentario = input} placeholder="Adicione um comentário..." className="fotoAtualizacoes-form-campo"/>
                     <input type="submit" value="Comentar!" className="fotoAtualizacoes-form-submit"/>
                 </form>
@@ -187,7 +158,7 @@ export default class Publicacao extends Component{
                 <FotoHeader foto={this.props.foto}/>
                 <img alt="foto" className="foto-src" src={this.props.foto.urlFoto}/>
                 <FotoInfo foto={this.props.foto} key={this.props.foto.id}/>
-                {isLoggedIn() ? '' : (<FotoAtualizacoes foto={this.props.foto}/>)}
+                {isLoggedIn() ? '' : (<FotoAtualizacoes foto={this.props.foto} curtir={this.props.curtir} comentar={this.props.comentar}/>)}
             </div>
 
         );
