@@ -15,7 +15,7 @@ export  default class Header extends Component  {
 
         })
         .then(fotos => {
-            Pubsub.publish('timeline-pesquisa',fotos);
+            Pubsub.publish('timeline',fotos);
         });
     }
 

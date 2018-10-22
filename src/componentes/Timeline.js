@@ -1,40 +1,24 @@
 import React , {Component} from "react";
 import Publicacao from "./Publicacao";
-import Pubsub from 'pubsub-js';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import LogicaTimeline from '../logicas/LogicaTimeline';
+
 
 export default class Timeline extends Component  {
     constructor(props){
+
         super(props);
         this.state ={fotos:[]};
         this.login = this.props.login;
+        this.logicaTimeline = new LogicaTimeline();
+
     }
 
     componentWillMount(){
-        Pubsub.subscribe('timeline-pesquisa',(topico,novasfotos) => {
-            this.setState({fotos:novasfotos})
-        });
-
-        Pubsub.subscribe('atualiza-liker',(topico,infoLiker) => {
-            const fotoEncontrada = this.state.fotos.find(foto => foto.id === infoLiker.fotoId);
-            fotoEncontrada.likeada=!fotoEncontrada.likeada;
-            const possivelLiker = fotoEncontrada.likers.find(liker => liker.login === infoLiker.liker.login);
-
-            if(possivelLiker === undefined){
-                fotoEncontrada.likers.push(infoLiker.liker);
-            }else {
-                const novosLikers = fotoEncontrada.likers.filter(liker => liker.login !== infoLiker.liker.login);
-                fotoEncontrada.likers = novosLikers;
+        this.logicaTimeline.subscribe(fotos => {
+            this.setState({fotos})
             }
-            this.setState({fotos:this.state.fotos});
-        });
-
-        Pubsub.subscribe('novo-comentarios', (topico,infoComentario) =>
-        {
-            const fotoEncontrada = this.state.fotos.find(foto => foto.id === infoComentario.fotoId);
-            fotoEncontrada.comentarios.push(infoComentario.novoComentario);
-            this.setState({fotos:this.state.fotos});
-        });
+        )
     }
 
     componentDidMount(){
@@ -57,62 +41,23 @@ export default class Timeline extends Component  {
             urlPerfil = `http://instalura-api.herokuapp.com/api/public/fotos/${this.login}`;
         }
 
-        fetch(urlPerfil)
-            .then(response => {
-                if(response.ok){
-                    return response.json();
-                }else{
-                    throw new Error("não foi possivel carregar as fotos");
-                }
-            })
-            .then(novasFotos => {
-                this.setState({fotos:novasFotos});
-            })
+        this.logicaTimeline.listar(urlPerfil);
+
     }
     renderFotos(){
         return this.state.fotos.map(foto =>
             (
-                <Publicacao foto={foto} key={foto.id} curtir={this.curtir} comentar={this.comentar}/>
+                <Publicacao foto={foto} key={foto.id} curtir={this.curtir.bind(this)} comentar={this.comentar.bind(this)}/>
             )
         );
     }
+
     curtir(fotoId){
-        let curtirUrl = `http://instalura-api.herokuapp.com/api/fotos/${fotoId}/like?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`;
-
-        fetch(curtirUrl, {method: 'POST'})
-            .then(response => {
-                if(response.ok){
-                    return response.json();
-                }else{
-                    throw new Error("não foi possivel curtir a foto");
-                }
-            })
-            .then (liker => {
-                Pubsub.publish('atualiza-liker',{fotoId,liker});
-            })
+        this.logicaTimeline.curtir(fotoId)
     }
+
     comentar(fotoId,comentario){
-        const requestInfo = {
-            method:'POST',
-            body:JSON.stringify({texto:comentario}),
-            headers: new Headers({
-                'Content-type':'application/json'
-            })
-        };
-
-        let comment = `https://instalura-api.herokuapp.com/api/fotos/${fotoId}/comment?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`;
-
-        fetch(comment,requestInfo)
-            .then(response => {
-                if(response.ok){
-                    return response.json();
-                } else {
-                    throw new Error("não foi possível comentar");
-                }
-            })
-            .then(novoComentario => {
-                Pubsub.publish('novo-comentarios', { fotoId,novoComentario});
-            })
+        this.logicaTimeline.comentar(fotoId,comentario)
     }
 
     render(){
