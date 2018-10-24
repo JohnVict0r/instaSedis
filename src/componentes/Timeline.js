@@ -1,21 +1,17 @@
 import React , {Component} from "react";
 import Publicacao from "./Publicacao";
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import LogicaTimeline from '../logicas/LogicaTimeline';
 
 
 export default class Timeline extends Component  {
     constructor(props){
-
         super(props);
         this.state ={fotos:[]};
         this.login = this.props.login;
-        this.logicaTimeline = new LogicaTimeline();
-
     }
 
     componentWillMount(){
-        this.logicaTimeline.subscribe(fotos => {
+        this.props.logicaTimeline.subscribe(fotos => {
             this.setState({fotos})
             }
         )
@@ -32,6 +28,14 @@ export default class Timeline extends Component  {
         }
     }
 
+    curtir(fotoId){
+        this.props.logicaTimeline.curtir(fotoId)
+    }
+
+    comentar(fotoId,comentario){
+        this.props.logicaTimeline.comentar(fotoId,comentario)
+    }
+
     carregarFotos(){
         let urlPerfil;
 
@@ -41,7 +45,7 @@ export default class Timeline extends Component  {
             urlPerfil = `http://instalura-api.herokuapp.com/api/public/fotos/${this.login}`;
         }
 
-        this.logicaTimeline.listar(urlPerfil);
+        this.props.logicaTimeline.listar(urlPerfil);
 
     }
     renderFotos(){
@@ -50,14 +54,6 @@ export default class Timeline extends Component  {
                 <Publicacao foto={foto} key={foto.id} curtir={this.curtir.bind(this)} comentar={this.comentar.bind(this)}/>
             )
         );
-    }
-
-    curtir(fotoId){
-        this.logicaTimeline.curtir(fotoId)
-    }
-
-    comentar(fotoId,comentario){
-        this.logicaTimeline.comentar(fotoId,comentario)
     }
 
     render(){
