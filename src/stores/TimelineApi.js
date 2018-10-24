@@ -1,28 +1,31 @@
 import Pubsub from 'pubsub-js';
 
-export default class LogicaTimeline {
+export default class TimelineApi {
 
 
     constructor(fotos){
         this.fotos = fotos;
     }
 
-    listar(urlPerfil){
-        fetch(urlPerfil)
-            .then(response => {
-                if(response.ok){
-                    return response.json();
-                }else{
-                    throw new Error("não foi possivel carregar as fotos");
-                }
-            })
-            .then(fotos => {
-                this.fotos = fotos;
-                Pubsub.publish('timeline',this.fotos);
-            })
+    static listar(urlPerfil){
+        return dispatch => {
+            fetch(urlPerfil)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error("não foi possivel carregar as fotos");
+                    }
+                })
+                .then(fotos => {
+
+                    dispatch({type: 'LISTAGEM', fotos});
+                    return fotos;
+                })
+        }
     }
     subscribe(callback){
-        Pubsub.subscribe('timeline',(topico,fotos) => {
+        Pubsub.subscribe('timelineReducer',(topico, fotos) => {
             callback(fotos);
         });
 
@@ -52,7 +55,7 @@ export default class LogicaTimeline {
                     const novosLikers = fotoEncontrada.likers.filter(likerAtual => likerAtual.login !== liker.login);
                     fotoEncontrada.likers = novosLikers;
                 }
-                Pubsub.publish('timeline',this.fotos)
+                Pubsub.publish('timelineReducer',this.fotos)
             })
     }
 
@@ -78,7 +81,7 @@ export default class LogicaTimeline {
             .then(novoComentario => {
                 const fotoEncontrada = this.fotos.find(foto => foto.id === fotoId);
                 fotoEncontrada.comentarios.push(novoComentario);
-                Pubsub.publish('timeline', this.fotos);
+                Pubsub.publish('timelineReducer', this.fotos);
             })
     }
 }

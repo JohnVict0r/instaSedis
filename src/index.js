@@ -44,7 +44,7 @@ ReactDOM.render(
 
 function isLoggedIn() {
     const history = createBrowserHistory();
-    const match = matchPath(history.location.pathname,  {path: '/timeline/:login'});
+    const match = matchPath(history.location.pathname,  {path: '/timelineReducer/:login'});
 
     const privateRoute = match === null;
 
