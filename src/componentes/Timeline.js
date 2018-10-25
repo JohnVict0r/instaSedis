@@ -29,11 +29,11 @@ export default class Timeline extends Component  {
     }
 
     curtir(fotoId){
-        this.props.store.curtir(fotoId)
+        this.props.store.dispatch(TimelineApi.curtir(fotoId));
     }
 
     comentar(fotoId,comentario){
-        this.props.store.comentar(fotoId,comentario)
+        this.props.store.dispatch(TimelineApi.comentar(fotoId,comentario));
     }
 
     carregarFotos(){

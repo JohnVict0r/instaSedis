@@ -38,13 +38,9 @@ ReactDOM.render(
     , document.getElementById('root')
 );
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: http://bit.ly/CRA-PWA
-
 function isLoggedIn() {
     const history = createBrowserHistory();
-    const match = matchPath(history.location.pathname,  {path: '/timelineReducer/:login'});
+    const match = matchPath(history.location.pathname,  {path: '/timeline/:login'});
 
     const privateRoute = match === null;
 

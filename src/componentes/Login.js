@@ -57,7 +57,7 @@ export default class Login extends Component{
             })
             .then(token => {
                 localStorage.setItem('auth-token',token);
-                this.props.history.push('/timelineReducer');
+                this.props.history.push('/timeline');
 
             })
             .catch(error => {
