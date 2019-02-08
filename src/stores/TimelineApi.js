@@ -19,7 +19,7 @@ export default class TimelineApi {
 
     static curtir(fotoId,){
         return dispatch => {
-            let curtirUrl = `http://instalura-api.herokuapp.com/api/fotos/${fotoId}/like?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`;
+            const curtirUrl = `http://instalura-api.herokuapp.com/api/fotos/${fotoId}/like?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`;
 
             fetch(curtirUrl, {
                 method: 'POST'
@@ -49,7 +49,7 @@ export default class TimelineApi {
                     })
                 };
 
-                let comment = `https://instalura-api.herokuapp.com/api/fotos/${fotoId}/comment?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`;
+                const comment = `https://instalura-api.herokuapp.com/api/fotos/${fotoId}/comment?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`;
 
                 fetch(comment, requestInfo)
                     .then(response => {
