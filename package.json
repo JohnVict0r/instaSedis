@@ -14,7 +14,7 @@
     "react-scripts": "2.0.4",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
-    "yarn": "^1.10.1"
+    "yarn": "^1.17.3"
   },
   "scripts": {
     "start": "react-scripts start",
